@@ -18,47 +18,71 @@ const typeLabels: Record<Property['type'], string> = {
   house: 'Дом',
   commercial: 'Коммерческая',
 }
+
+const params = computed(() => {
+  if (!property.value) {
+    return []
+  }
+
+  return [
+    { label: 'Тип', value: typeLabels[property.value.type] },
+    { label: 'Комнат', value: String(property.value.rooms) },
+    { label: 'Площадь', value: formatArea(property.value.area) },
+    { label: 'Этаж', value: `${property.value.floor} из ${property.value.floors}` },
+    { label: 'Город', value: property.value.city },
+    { label: 'Адрес', value: property.value.address },
+  ]
+})
 </script>
 
 <template>
-  <section v-if="property" class="mx-auto max-w-6xl px-4 py-10">
-    <NuxtLink to="/" class="text-sm font-medium text-brand-700 hover:underline">← В каталог</NuxtLink>
+  <section v-if="property" class="mx-auto max-w-[1200px] px-4 py-6">
+    <nav class="flex items-center gap-2 text-[13px] text-muted">
+      <NuxtLink to="/" class="hover:text-ink">Недвижимость</NuxtLink>
+      <span>/</span>
+      <span>{{ property.city }}</span>
+      <span>/</span>
+      <span class="text-ink">{{ typeLabels[property.type] }}</span>
+    </nav>
 
-    <div v-if="status === 'pending'" class="mt-6 h-96 animate-pulse rounded-2xl bg-slate-200" />
+    <div v-if="status === 'pending'" class="mt-6 aspect-[16/9] animate-pulse rounded-xl bg-surface" />
 
-    <div v-else class="mt-6 grid gap-8 lg:grid-cols-[2fr_1fr]">
-      <img :src="property.image" :alt="property.title" class="h-96 w-full rounded-2xl object-cover">
+    <div v-else class="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+      <div>
+        <img
+          :src="property.image"
+          :alt="property.title"
+          class="aspect-[16/9] w-full rounded-xl bg-surface object-cover"
+        >
 
-      <div class="space-y-4">
-        <span class="inline-block rounded-full bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700">
-          {{ typeLabels[property.type] }}
-        </span>
-        <h1 class="text-2xl font-bold text-slate-900">{{ property.title }}</h1>
-        <p class="text-slate-500">{{ property.city }}, {{ property.address }}</p>
+        <div class="mt-8">
+          <h1 class="text-[24px] font-bold leading-snug sm:text-[30px]">
+            {{ property.rooms }}-комн. {{ typeLabels[property.type].toLowerCase() }}, {{ formatArea(property.area) }}
+          </h1>
+          <p class="mt-2 text-[15px] text-muted">{{ property.title }}</p>
+        </div>
 
-        <dl class="grid grid-cols-2 gap-3 rounded-2xl bg-white p-5 ring-1 ring-slate-200">
-          <div>
-            <dt class="text-xs text-slate-500">Комнат</dt>
-            <dd class="font-semibold">{{ property.rooms }}</dd>
-          </div>
-          <div>
-            <dt class="text-xs text-slate-500">Площадь</dt>
-            <dd class="font-semibold">{{ formatArea(property.area) }}</dd>
-          </div>
-          <div>
-            <dt class="text-xs text-slate-500">Этаж</dt>
-            <dd class="font-semibold">{{ property.floor }} из {{ property.floors }}</dd>
-          </div>
-          <div>
-            <dt class="text-xs text-slate-500">Цена</dt>
-            <dd class="font-semibold">{{ formatPrice(property.price) }}</dd>
+        <dl class="mt-6 divide-y divide-line border-y border-line">
+          <div v-for="param in params" :key="param.label" class="flex justify-between gap-6 py-3 text-[15px]">
+            <dt class="text-muted">{{ param.label }}</dt>
+            <dd class="text-right font-medium">{{ param.value }}</dd>
           </div>
         </dl>
-
-        <button class="w-full rounded-xl bg-brand-600 px-5 py-3 font-semibold text-white transition hover:bg-brand-700">
-          Связаться с агентом
-        </button>
       </div>
+
+      <aside class="lg:sticky lg:top-20 lg:self-start">
+        <div class="rounded-xl border border-line p-5">
+          <p class="text-[28px] font-bold leading-none">{{ formatPrice(property.price) }}</p>
+          <p class="mt-2 text-[13px] text-muted">Цена объекта</p>
+
+          <button type="button" class="btn-accent mt-5 w-full">Связаться с агентом</button>
+          <button type="button" class="btn-outline mt-2 w-full">Позвонить</button>
+
+          <p class="mt-4 text-[12px] leading-relaxed text-muted">
+            Демонстрационное объявление. Актуальность цены и характеристик уточняйте у продавца.
+          </p>
+        </div>
+      </aside>
     </div>
   </section>
 </template>

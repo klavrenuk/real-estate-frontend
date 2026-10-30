@@ -1,18 +1,54 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-50: #eef6ff;
-  --color-brand-100: #d9ebff;
-  --color-brand-200: #bcdcff;
-  --color-brand-300: #8ec5ff;
-  --color-brand-400: #59a4ff;
-  --color-brand-500: #337fff;
-  --color-brand-600: #1b5ff5;
-  --color-brand-700: #164be1;
-  --color-brand-800: #183fb6;
-  --color-brand-900: #193a8f;
+  --font-sans: "YS Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  --color-ink: #000000;
+  --color-muted: #858585;
+  --color-line: #e6e6e6;
+  --color-surface: #f5f5f5;
+  --color-yandex: #fc3f1d;
+  --color-yandex-dark: #d92c0c;
+  --color-accent: #ffdb4d;
+  --color-accent-dark: #ffcc00;
 }
 
-body {
-  @apply bg-slate-50 text-slate-900 antialiased;
+@layer base {
+  body {
+    @apply bg-white text-ink;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-ink);
+  }
+}
+
+@layer components {
+  .btn-accent,
+  .btn-outline {
+    @apply inline-flex items-center justify-center rounded-md px-5 py-2.5 text-sm font-medium transition;
+  }
+
+  .btn-accent {
+    @apply bg-accent text-ink hover:bg-accent-dark active:scale-[0.99];
+  }
+
+  .btn-outline {
+    @apply border border-line bg-white text-ink hover:bg-surface;
+  }
+
+  .tag {
+    @apply inline-flex items-center rounded bg-accent px-1.5 py-0.5 text-[11px] font-semibold text-ink;
+  }
+
+  .field {
+    @apply w-full rounded-md border border-line bg-white px-3 py-2.5 text-sm text-ink outline-none placeholder:text-muted focus:border-ink;
+  }
 }
